@@ -1,24 +1,25 @@
-# README
+# Rails 6 + React + jsonapi serializer
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+### Getting Started
+First generate a new rails api:
+```shell
+rails new rails-jsonapi --api
+cd rails-jsonapi
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Set generator configs in `config/application.rb`:
+```ruby
+module RailsJsonapi
+    class Application < Rails::Application
+        ...
+        # generator config
+        config.generators do |g|
+        g.test_framework  false
+        g.stylesheets     false
+        g.helper          false
+        g.javascripts     false
+        end
+    end
+end
+```
