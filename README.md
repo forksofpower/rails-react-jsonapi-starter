@@ -69,10 +69,26 @@ Setup the database, run migrations and generate seed data.
 rails db:create db:migrate db:seed
 ```
 
-Add `ArticleController` and `AuthorController` with basic actions `:index` and `:show`.
+## Setup `Api` module
+Wrap the generated routes in a namespace block.
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  namespace :api do
+    resources :articles
+    resources :authors
+  end
+end
+```
+Create a new `api` directory in `app/controllers` and move the generated controllers into that directory.
+```shell
+mkdir app/controllers/api
+mv app/controllers/{articles,}
+```
+ Setup `ArticleController` and `AuthorController` with basic actions `:index` and `:show`. Take note of the `Api` module prefix.
 ```ruby
 # app/controllers/articles_controller.rb
-class ArticlesController < ApplicationController
+class Api::ArticlesController < ApplicationController
     before_action :find_article, only: :show
     def index
         @articles = Article.all
@@ -112,6 +128,114 @@ end
 ## Fast JSONapi
 Add the `fast_jsonapi` gem to the project.
 ```shell
-bundle add 'gast_jsonapi'
+bundle add 'fast_jsonapi'
 ```
 We can now use the serializer generator that is bundled with `fast_jsonapi`.
+```shell
+rails g serializer Article title body
+rails g serializer Author name
+```
+
+This will create two files:
+```ruby
+# app/serializers/article_serializer.rb
+class ArticleSerializer < ApplicationSerializer
+  attributes :title, :body
+  belongs_to :author
+end
+```
+```ruby
+# app/serializers/author_serializer.rb
+class AuthorArticleSerializer < ApplicationSerializer
+  attributes :name
+end
+```
+
+To keep it simple, we will only define the associations on the `ArticleSerializer`.
+```ruby
+# app/serializers/article_serializer.rb
+class ArticleSerializer < ApplicationSerializer
+  attributes :title, :body
+  belongs_to :author
+end
+```
+
+## Check for understanding
+Run `rails s` to start up the rails server.
+
+If you're not already using a rest client such as [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/), get with the times. Make a `GET` request to `localhost:3000/articles`. The response should look like this:
+```json
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "article",
+      "attributes": {
+        "title": "The Last Enemy",
+        "body": "..."
+      },
+      "relationships": {
+        "author": {
+          "data": {
+            "id": "9",
+            "type": "author"
+          }
+        }
+      }
+    },
+    {
+      "id": "2",
+      "type": "article",
+      "attributes": {
+        "title": "Cover Her Face",
+        "body": "..."
+      },
+      "relationships": {
+        "author": {
+          "data": {
+            "id": "3",
+            "type": "author"
+          }
+        }
+      }
+    },
+    {
+      "id": "3",
+      "type": "article",
+      "attributes": {
+        "title": "Catcher In The Rye",
+        "body": "..."
+      },
+      "relationships": {
+        "author": {
+          "data": {
+            "id": "3",
+            "type": "author"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "id": "9",
+      "type": "author",
+      "attributes": {
+        "name": "Tawna Denesik PhD"
+      }
+    },
+    {
+      "id": "3",
+      "type": "author",
+      "attributes": {
+        "name": "Mrs. Carmela Herzog"
+      }
+    }
+  ]
+}
+```
+This is frankly a confusing format to wrap your head around at first, but once we dig in you will understand the reasoning. YOU SHOULD READ ABOUT THIS YOURSELF...
+
+
+## Setup React
+

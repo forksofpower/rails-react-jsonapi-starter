@@ -44,3 +44,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "pry", "~> 0.13.1"
 
 gem "faker", "~> 2.11"
+
+gem "fast_jsonapi", "~> 1.5"

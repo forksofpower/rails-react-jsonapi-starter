@@ -35,11 +35,11 @@ module RailsJsonapi
     config.api_only = true
     
     # generator config
-    config.generators do |g|
-      g.test_framework  false
-      g.stylesheets     false
-      g.helper          false
-      g.javascripts     false
-    end
+    # config.generators do |g|
+    #   g.test_framework  false,
+    #   g.stylesheets     false,
+    #   g.helper          false,
+    #   g.javascripts     false,
+    # end
   end
 end
